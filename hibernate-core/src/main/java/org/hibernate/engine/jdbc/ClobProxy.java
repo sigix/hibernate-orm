@@ -33,6 +33,7 @@ import java.io.StringReader;
 import java.io.InputStream;
 import java.io.IOException;
 
+import org.hibernate.engine.jdbc.internal.CharacterStreamImpl;
 import org.hibernate.type.descriptor.java.DataHelper;
 
 /**
@@ -218,10 +219,6 @@ public class ClobProxy implements InvocationHandler {
 	 * @return The class loader appropriate for proxy construction.
 	 */
 	protected static ClassLoader getProxyClassLoader() {
-		ClassLoader cl = Thread.currentThread().getContextClassLoader();
-		if ( cl == null ) {
-			cl = ClobImplementer.class.getClassLoader();
-		}
-		return cl;
+		return ClobImplementer.class.getClassLoader();
 	}
 }

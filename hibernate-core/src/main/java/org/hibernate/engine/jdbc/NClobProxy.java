@@ -26,6 +26,7 @@ package org.hibernate.engine.jdbc;
 import java.sql.Clob;
 import java.io.Reader;
 import java.lang.reflect.Proxy;
+import java.sql.NClob;
 
 /**
  * Manages aspects of proxying java.sql.NClobs for non-contextual creation, including proxy creation and
@@ -96,10 +97,6 @@ public class NClobProxy extends ClobProxy {
 	 * @return The class loader appropriate for proxy construction.
 	 */
 	protected static ClassLoader getProxyClassLoader() {
-		ClassLoader cl = Thread.currentThread().getContextClassLoader();
-		if ( cl == null ) {
-			cl = NClobImplementer.class.getClassLoader();
-		}
-		return cl;
+		return NClobImplementer.class.getClassLoader();
 	}
 }
