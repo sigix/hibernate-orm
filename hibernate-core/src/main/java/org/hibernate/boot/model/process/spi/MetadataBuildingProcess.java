@@ -148,15 +148,16 @@ public class MetadataBuildingProcess {
 		// 		to unified model
 
 		final MetadataSourceProcessor processor = new MetadataSourceProcessor() {
-			private final HbmMetadataSourceProcessorImpl hbmProcessor = new HbmMetadataSourceProcessorImpl(
-					managedResources,
-					rootMetadataBuildingContext
-			);
+			private final MetadataSourceProcessor hbmProcessor =
+						options.isXmlMetadataEnabled()
+							? new HbmMetadataSourceProcessorImpl( managedResources, rootMetadataBuildingContext )
+							: new NoOpMetadataSourceProcessorImpl();
 
 			private final AnnotationMetadataSourceProcessorImpl annotationProcessor = new AnnotationMetadataSourceProcessorImpl(
 					managedResources,
 					rootMetadataBuildingContext,
-					jandexView
+					jandexView,
+					options.isXmlMetadataEnabled()
 			);
 
 			@Override

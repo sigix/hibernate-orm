@@ -616,6 +616,7 @@ public class MetadataBuilderImpl implements MetadataBuilderImplementor, TypeCont
 		private IdGeneratorInterpreterImpl idGenerationTypeInterpreter = new IdGeneratorInterpreterImpl();
 
 		private String schemaCharset;
+		private boolean xmlMetadataEnabled;
 
 		public MetadataBuildingOptionsImpl(StandardServiceRegistry serviceRegistry) {
 			this.serviceRegistry = serviceRegistry;
@@ -626,6 +627,12 @@ public class MetadataBuilderImpl implements MetadataBuilderImplementor, TypeCont
 			this.mappingDefaults = new MappingDefaultsImpl( serviceRegistry );
 
 			this.multiTenancyStrategy =  MultiTenancyStrategy.determineMultiTenancyStrategy( configService.getSettings() );
+
+			this.xmlMetadataEnabled =  configService.getSetting(
+					AvailableSettings.XML_MAPPING_ENABLED,
+					StandardConverters.BOOLEAN,
+					true
+			);
 
 			this.implicitDiscriminatorsForJoinedInheritanceSupported = configService.getSetting(
 					AvailableSettings.IMPLICIT_DISCRIMINATOR_COLUMNS_FOR_JOINED_SUBCLASS,
@@ -899,6 +906,11 @@ public class MetadataBuilderImpl implements MetadataBuilderImplementor, TypeCont
 		@Override
 		public String getSchemaCharset() {
 			return schemaCharset;
+		}
+
+		@Override
+		public boolean isXmlMetadataEnabled() {
+			return xmlMetadataEnabled;
 		}
 
 		/**
