@@ -41,6 +41,7 @@ import org.hibernate.exception.JDBCExceptionHelper;
 import org.hibernate.exception.SQLExceptionConverter;
 import org.hibernate.mapping.Table;
 import org.hibernate.dialect.Dialect;
+import org.hibernate.dialect.DB2Dialect;
 import org.hibernate.util.StringHelper;
 
 /**
@@ -54,6 +55,7 @@ public class DatabaseMetadata {
 	private final Map tables = new HashMap();
 	private final Set sequences = new HashSet();
 	private final boolean extras;
+	private final Dialect dialect;
 
 	private DatabaseMetaData meta;
 	private SQLExceptionConverter sqlExceptionConverter;
@@ -67,9 +69,11 @@ public class DatabaseMetadata {
 		meta = connection.getMetaData();
 		this.extras = extras;
 		initSequences(connection, dialect);
+		this.dialect = dialect;
 	}
 
 	private static final String[] TYPES = {"TABLE", "VIEW"};
+	private static final String[] TYPES_DB2 = {"TABLE", "VIEW", "ALIAS", "SYNONYM"};
 
 	public TableMetadata getTableMetadata(String name, String schema, String catalog, boolean isQuoted) throws HibernateException {
 
@@ -79,19 +83,19 @@ public class DatabaseMetadata {
 			return table;
 		}
 		else {
-			
+			String[] types = (this.dialect instanceof DB2Dialect) ? TYPES_DB2 : TYPES;
 			try {
 				ResultSet rs = null;
 				try {
 					if ( (isQuoted && meta.storesMixedCaseQuotedIdentifiers())) {
-						rs = meta.getTables(catalog, schema, name, TYPES);
+						rs = meta.getTables(catalog, schema, name, types);
 					} else if ( (isQuoted && meta.storesUpperCaseQuotedIdentifiers()) 
 						|| (!isQuoted && meta.storesUpperCaseIdentifiers() )) {
 						rs = meta.getTables( 
 								StringHelper.toUpperCase(catalog), 
 								StringHelper.toUpperCase(schema), 
 								StringHelper.toUpperCase(name), 
-								TYPES 
+								types 
 							);
 					}
 					else if ( (isQuoted && meta.storesLowerCaseQuotedIdentifiers())
@@ -100,11 +104,11 @@ public class DatabaseMetadata {
 								StringHelper.toLowerCase(catalog), 
 								StringHelper.toLowerCase(schema), 
 								StringHelper.toLowerCase(name), 
-								TYPES 
+								types 
 							);
 					}
 					else {
-						rs = meta.getTables(catalog, schema, name, TYPES);
+						rs = meta.getTables(catalog, schema, name, types);
 					}
 					
 					while ( rs.next() ) {
