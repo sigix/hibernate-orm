@@ -29,7 +29,7 @@
     <groupId>org.hibernate</groupId>
     <artifactId>hibernate-parent</artifactId>
     <packaging>pom</packaging>
-    <version>3.6.3.Final-appian-1.2</version>
+    <version>3.6.3.Final-appian-1.3</version>
 
     <name>Hibernate Core Parent POM</name>
     <description>The base POM for all Hibernate Core modules.</description>
@@ -466,6 +466,9 @@
             <version>${slf4jVersion}</version>
             <scope>test</scope>
         </dependency>
+        <!-- APPIAN BEGIN block to comment out during compilation -->
+        <!-- These dependencies are test-only for other modules (NOT hibernate-core), but are no longer hosted anywhere public. -->
+        <!-- See https://hibernate.atlassian.net/browse/HHH-4623 -->
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
@@ -478,6 +481,7 @@
             <version>99.0-does-not-exist</version>
             <scope>test</scope>
         </dependency>
+        <!-- APPIAN END block to comment out during compilation -->
         <!-- / test-scoped dependencies for common testing dependencies -->
     </dependencies>
 

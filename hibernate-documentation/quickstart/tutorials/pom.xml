@@ -28,7 +28,7 @@
 
     <groupId>org.hibernate.tutorials</groupId>
     <artifactId>hibernate-tutorials</artifactId>
-    <version>3.6.3.Final-appian-1.2</version>
+    <version>3.6.3.Final-appian-1.3</version>
     <packaging>pom</packaging>
 
     <name>Hibernate Getting Started Guide Tutorials</name>
