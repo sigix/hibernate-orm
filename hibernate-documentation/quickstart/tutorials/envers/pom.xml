@@ -29,7 +29,7 @@
     <parent>
         <artifactId>hibernate-tutorials</artifactId>
         <groupId>org.hibernate.tutorials</groupId>
-        <version>3.6.3.Final-appian-1.3</version>
+        <version>3.6.3.Final-appian-1.4</version>
     </parent>
 
     <artifactId>hibernate-tutorial-envers</artifactId>

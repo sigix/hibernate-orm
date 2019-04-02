@@ -2,7 +2,6 @@
 
 - where `n` is the current version:
   - `git grep -l '3.6.3.Final' -- "*pom.xml" | xargs -n 1 sed -i "" "s/3.6.3.Final-appian-1.(n)/3.6.3.Final-appian-1.(n+1)/"`
-- `cd hibernate-core`
 - `mvn clean`
 - comment out the `commons-logging` dependencies in `hibernate-parent/pom.xml`
   - search for `APPIAN`
