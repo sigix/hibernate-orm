@@ -28,6 +28,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.hibernate.AssertionFailure;
 import org.hibernate.MappingException;
@@ -58,6 +60,18 @@ public final class ReflectHelper {
 
 	private static final Method OBJECT_EQUALS;
 	private static final Method OBJECT_HASHCODE;
+
+	private static final Map<Class, Map<String, Class>> classByCallerCache = new ConcurrentHashMap();
+
+	private static final class DEFAULT_CALLER {
+		private DEFAULT_CALLER() {
+		}
+	}
+
+	private static final class NOT_A_CLASS {
+		private NOT_A_CLASS() {
+		}
+	};
 
 	static {
 		Method eq;
@@ -159,6 +173,23 @@ public final class ReflectHelper {
 	 * @throws ClassNotFoundException From {@link Class#forName(String, boolean, ClassLoader)}.
 	 */
 	public static Class classForName(String name, Class caller) throws ClassNotFoundException {
+		final Map<String, Class> classCache = classByCallerCache.computeIfAbsent(caller, clazz -> new ConcurrentHashMap<>());
+
+		final Class clazz = classCache.computeIfAbsent(name, k -> {
+			try {
+				return doClassForName(k, caller);
+			} catch (ClassNotFoundException e) {
+				return NOT_A_CLASS.class;
+			}
+		});
+
+		if (NOT_A_CLASS.class.equals(clazz)) {
+			throw new ClassNotFoundException(name);
+		}
+		return clazz;
+	}
+
+	private static Class doClassForName(String name, Class caller) throws ClassNotFoundException {
 		try {
 			ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
 			if ( contextClassLoader != null ) {
@@ -181,6 +212,23 @@ public final class ReflectHelper {
 	 * @throws ClassNotFoundException From {@link Class#forName(String)}.
 	 */
 	public static Class classForName(String name) throws ClassNotFoundException {
+		final Map<String, Class> classCache = classByCallerCache.computeIfAbsent(DEFAULT_CALLER.class, clazz -> new ConcurrentHashMap<>());
+
+		final Class clazz = classCache.computeIfAbsent(name, k -> {
+			try {
+				return doClassForName(k);
+			} catch (ClassNotFoundException e) {
+				return NOT_A_CLASS.class;
+			}
+		});
+
+		if (NOT_A_CLASS.class.equals(clazz)) {
+			throw new ClassNotFoundException(name);
+		}
+		return clazz;
+	}
+
+	private static Class doClassForName(String name) throws ClassNotFoundException {
 		try {
 			ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
 			if ( contextClassLoader != null ) {
