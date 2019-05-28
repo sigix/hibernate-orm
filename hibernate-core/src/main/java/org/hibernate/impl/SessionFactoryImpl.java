@@ -822,6 +822,10 @@ public final class SessionFactoryImpl implements SessionFactory, SessionFactoryI
 	 */
 	public String[] getImplementors(String className) throws MappingException {
 
+		if (!className.contains(".")) {
+			return new String[] { className };
+		}
+
 		final Class clazz;
 		try {
 			clazz = ReflectHelper.classForName(className);
